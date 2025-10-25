@@ -58,6 +58,10 @@ function showQuestion() {
     answerButtons.appendChild(btn);
   });
 
+  // ✅ clear all lingering active/selected states before showing new question
+  const allButtons = document.querySelectorAll('#answer-buttons button');
+  allButtons.forEach(btn => btn.classList.remove('selected', 'active', 'correct', 'wrong'));
+
   if (progressBar) {
     progressBar.style.width = `${(currentQuestion / questions.length) * 100}%`;
   }
@@ -69,12 +73,7 @@ function resetState() {
   timerEl.textContent = timeLeft;
   timerEl.style.width = '80px';
   clearInterval(timer);
-
-  // ✅ clear focus / lingering active states (mobile fix)
   document.activeElement?.blur();
-  Array.from(answerButtons.children).forEach(btn => 
-    btn.classList.remove('correct', 'wrong', 'active')
-  );
 }
 
 function startTimer() {
@@ -96,6 +95,10 @@ function startTimer() {
 function selectAnswer(answer, button) {
   clearInterval(timer);
 
+  // ✅ clear any previously active states before marking new one
+  const allButtons = document.querySelectorAll('#answer-buttons button');
+  allButtons.forEach(btn => btn.classList.remove('correct', 'wrong', 'selected'));
+
   if (answer.correct) {
     button.classList.add('correct');
     score++;
@@ -103,13 +106,13 @@ function selectAnswer(answer, button) {
     button.classList.add('wrong');
   }
 
-  Array.from(answerButtons.children).forEach(btn => btn.disabled = true);
+  button.classList.add('selected');
 
-  // ✅ brief visual feedback before moving to next question
+  allButtons.forEach(btn => btn.disabled = true);
+
+  // ✅ brief feedback before next question
   setTimeout(() => {
-    Array.from(answerButtons.children).forEach(btn => 
-      btn.classList.remove('correct', 'wrong')
-    );
+    allButtons.forEach(btn => btn.classList.remove('correct', 'wrong', 'selected'));
     nextQuestion();
   }, 700);
 }
