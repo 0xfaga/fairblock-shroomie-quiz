@@ -69,6 +69,12 @@ function resetState() {
   timerEl.textContent = timeLeft;
   timerEl.style.width = '80px';
   clearInterval(timer);
+
+  // ✅ clear focus / lingering active states (mobile fix)
+  document.activeElement?.blur();
+  Array.from(answerButtons.children).forEach(btn => 
+    btn.classList.remove('correct', 'wrong', 'active')
+  );
 }
 
 function startTimer() {
@@ -98,7 +104,14 @@ function selectAnswer(answer, button) {
   }
 
   Array.from(answerButtons.children).forEach(btn => btn.disabled = true);
-  setTimeout(nextQuestion, 700);
+
+  // ✅ brief visual feedback before moving to next question
+  setTimeout(() => {
+    Array.from(answerButtons.children).forEach(btn => 
+      btn.classList.remove('correct', 'wrong')
+    );
+    nextQuestion();
+  }, 700);
 }
 
 function nextQuestion() {

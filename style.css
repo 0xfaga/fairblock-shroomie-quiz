@@ -105,6 +105,15 @@ input::placeholder {
   letter-spacing: 0.5px;
 }
 
+/* ✅ fix for mobile tap highlight issue */
+button:focus,
+button:active {
+  outline: none;
+  background: none;
+  box-shadow: none;
+}
+
+/* button states */
 #answer-buttons button:hover {
   background: #00e5ff;
   color: #000;
