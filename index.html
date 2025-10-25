@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fairblock Shroomie Quiz</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- animated background -->
+  <canvas id="bg-canvas"></canvas>
+
+  <main>
+    <!-- Title Section -->
+    <header id="header">
+      <h1>🍄 Fairblock Shroomie Quiz</h1>
+      <p class="subtitle">Test your Fairblock knowledge and claim your Shroomie Badge!</p>
+    </header>
+
+    <!-- Login Screen -->
+    <section id="login-screen">
+      <div class="card">
+        <h2>Enter your Discord Username</h2>
+        <input type="text" id="username" placeholder="e.g. cryptofrog#0420">
+        <button id="start-btn">Start Quiz</button>
+      </div>
+    </section>
+
+    <!-- Quiz Screen -->
+    <section id="quiz-screen" class="hidden">
+      <div id="progress-container">
+        <div id="progress-bar"></div>
+      </div>
+
+      <div id="timer">30</div>
+
+      <div id="question-container" class="card">
+        <div id="question-text"></div>
+        <div id="answer-buttons"></div>
+      </div>
+    </section>
+
+    <!-- Result Screen -->
+    <section id="result-screen" class="hidden">
+      <div class="card">
+        <h2>Quiz Completed!</h2>
+        <p id="final-score"></p>
+        <p id="badge"></p>
+
+        <div id="badge-container" class="hidden">
+          <canvas id="badge-canvas" width="400" height="600"></canvas>
+          <br>
+          <button id="download-badge">Download your Badge</button>
+        </div>
+
+        <button id="restart-btn">Restart Quiz</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer id="footer">
+    Developed by <strong>0xfaga</strong> for <strong>Fairblock Community ⚡</strong>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="questions.js"></script>
+  <script src="script.js"></script>
+  <script src="particles.js"></script> <!-- add this line -->
+</body>

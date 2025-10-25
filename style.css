@@ -1,0 +1,248 @@
+/* fairblock quiz theme */
+
+/* background canvas setup */
+#bg-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: radial-gradient(circle at top, #010409, #000);
+}
+
+/* layout base */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+  background: radial-gradient(circle at top, #010409, #000);
+  color: #e0ffff;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding: 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* input field */
+input {
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 2px solid #00e5ff;
+  margin-bottom: 10px;
+  color: #fff;
+  background: #0a0a0a;
+  outline: none;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+  width: 80%;
+  max-width: 300px;
+}
+
+input::placeholder {
+  color: #7deaff;
+  opacity: 0.8;
+}
+
+/* progress bar */
+#progress-container {
+  width: 100%;
+  background-color: #111;
+  height: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+#progress-bar {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #00e5ff, #4affff);
+  border-radius: 10px;
+  transition: width 0.3s;
+  box-shadow: 0 0 10px #00e5ff;
+}
+
+/* question styling */
+#question-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #e0ffff;
+  margin-bottom: 25px;
+  line-height: 1.6;
+  text-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
+}
+
+/* answer buttons */
+#answer-buttons button {
+  display: block;
+  background-color: #0d0d0d;
+  color: #00e5ff;
+  width: 250px;
+  margin: 10px auto;
+  padding: 12px 0;
+  border-radius: 8px;
+  border: 2px solid #00e5ff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.5px;
+}
+
+#answer-buttons button:hover {
+  background: #00e5ff;
+  color: #000;
+  box-shadow: 0 0 15px #00e5ff;
+}
+
+#answer-buttons button.correct {
+  background-color: #00ffc3;
+  color: #000;
+  box-shadow: 0 0 10px #00ffc3;
+}
+
+#answer-buttons button.wrong {
+  background-color: #ff0055;
+  color: #000;
+  box-shadow: 0 0 10px #ff0055;
+}
+
+/* timer styling */
+#timer {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  background: #0a0a0a;
+  width: 80px;
+  height: 80px;
+  line-height: 80px;
+  margin: 20px auto;
+  border-radius: 50%;
+  color: #00e5ff;
+  border: 2px solid #00e5ff;
+  box-shadow: 0 0 10px #00e5ff;
+}
+
+/* badge section */
+#badge {
+  font-weight: bold;
+  font-size: 1.5rem;
+  margin-top: 15px;
+  color: #00e5ff;
+  text-shadow: 0 0 8px #00e5ff;
+}
+
+#badge-container canvas {
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+  margin-top: 10px;
+  max-width: 100%;
+  height: auto;
+}
+
+/* card containers */
+#quiz-screen,
+#login-screen,
+#result-screen {
+  max-width: 500px;
+  width: 90%;
+  margin: auto;
+  background-color: rgba(10, 10, 10, 0.85);
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 0 30px rgba(0, 229, 255, 0.3);
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.6s ease;
+}
+
+#quiz-screen {
+  box-shadow: 0 0 30px rgba(0, 229, 255, 0.4), 0 0 60px rgba(0, 229, 255, 0.1);
+}
+
+/* buttons */
+#download-badge,
+#start-btn,
+#restart-btn {
+  background: linear-gradient(90deg, #00e5ff, #4affff);
+  color: #000;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  margin-top: 15px;
+}
+
+#download-badge:hover,
+#start-btn:hover,
+#restart-btn:hover {
+  background: #00e5ff;
+  box-shadow: 0 0 15px #00e5ff;
+}
+
+/* fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* footer styling */
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 100%;
+  text-align: center;
+  color: #00e5ff;
+  font-size: 0.9rem;
+  padding: 10px 0;
+  background: transparent;
+  text-shadow: 0 0 8px #00e5ff;
+  z-index: 10;
+}
+
+/* responsive improvements */
+@media (max-width: 600px) {
+  #question-text {
+    font-size: 1.2rem;
+  }
+
+  #timer {
+    font-size: 1.5rem;
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+  }
+
+  #answer-buttons button {
+    width: 100%;
+    font-size: 0.95rem;
+  }
+
+  input {
+    width: 90%;
+  }
+
+  footer {
+    font-size: 0.8rem;
+    padding: 8px 0;
+  }
+}
