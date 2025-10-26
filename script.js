@@ -46,19 +46,17 @@ function startQuiz() {
 }
 
 function resetState() {
-    // Get the current question container
+    // Clear text and buttons
+    questionText.textContent = '';
+    answerButtons.innerHTML = '';
+    
+    // Hide container to force repaint
     const questionContainer = document.getElementById('question-container');
-    
-    // Clear answer buttons and question text
-    questionText.textContent = ''; // Clear text directly
-    answerButtons.innerHTML = ''; // Clear buttons
-    
-    // Force repaint by toggling visibility
     questionContainer.style.display = 'none';
     questionContainer.offsetHeight; // Trigger reflow
     questionContainer.style.display = 'block';
     
-    // Reset timer and other states
+    // Reset timer and states
     timeLeft = 30;
     timerEl.textContent = timeLeft;
     timerEl.style.width = '80px';
@@ -66,14 +64,20 @@ function resetState() {
     document.activeElement?.blur();
     document.body.setAttribute('ontouchstart', '');
     
-    // Debug: Verify DOM elements
-    console.log('resetState: questionText exists:', !!questionText, 'answerButtons exists:', !!answerButtons);
-    console.log('resetState: Buttons after clear:', document.querySelectorAll('#answer-buttons button').length);
+    // Debug log
+    console.log('resetState: Text and buttons cleared, container reset');
 }
 
 function showQuestion() {
     resetState();
     const q = questions[currentQuestion];
+    
+    // Verify question data
+    if (!q || !q.question || !q.answers) {
+        console.error('showQuestion: Invalid question data at index', currentQuestion, q);
+        return;
+    }
+    
     questionText.textContent = q.question;
 
     q.answers.forEach((answer, index) => {
@@ -88,9 +92,10 @@ function showQuestion() {
         answerButtons.appendChild(btn);
     });
 
+    // Clear any residual states
     const allButtons = document.querySelectorAll('#answer-buttons button');
     allButtons.forEach(btn => {
-        btn.classList.remove('selected', 'active', 'correct', 'wrong');
+        btn.classList.remove('selected', '_helper: none;
         btn.disabled = false;
     });
 
@@ -98,20 +103,20 @@ function showQuestion() {
         progressBar.style.width = `${(currentQuestion / questions.length) * 100}%`;
     }
 
-    // Debug: Confirm question loaded
-    console.log('showQuestion: Question text set to:', questionText.textContent);
-    console.log('showQuestion: Buttons added:', allButtons.length);
+    console.log('showQuestion: Question set:', q.question, 'Buttons added:', allButtons.length);
 }
 
 function selectAnswer(answer, button) {
     clearInterval(timer);
 
+    // Double-clear classes to ensure no lingering states
     const allButtons = document.querySelectorAll('#answer-buttons button');
     allButtons.forEach(btn => {
         btn.classList.remove('correct', 'wrong', 'selected', 'active');
         btn.disabled = false;
     });
 
+    // Apply new classes
     if (answer.correct) {
         button.classList.add('correct');
         score++;
@@ -124,15 +129,21 @@ function selectAnswer(answer, button) {
 
     console.log('selectAnswer: Selected buttons before delay:', document.querySelectorAll('.selected').length);
 
+    // Hide container immediately to clear rendering
+    const questionContainer = document.getElementById('question-container');
+    questionContainer.style.display = 'none';
+
     setTimeout(() => {
+        // Clear again and show container
         allButtons.forEach(btn => {
             btn.classList.remove('correct', 'wrong', 'selected', 'active');
             btn.disabled = false;
         });
+        questionContainer.style.display = 'block';
         document.activeElement?.blur();
         console.log('selectAnswer: Selected buttons after clear:', document.querySelectorAll('.selected').length);
         nextQuestion();
-    }, 1500);
+    }, 200); // Short delay for immediate hide
 }
 
 function startTimer() {
