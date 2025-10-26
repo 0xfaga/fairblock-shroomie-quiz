@@ -141,13 +141,15 @@ input::placeholder {
 
 @media (hover: none) {
   #answer-buttons button {
-    transition: none; /* Remove transitions for instant updates */
+    transition: none; /* Already present */
   }
   #answer-buttons button:active {
-    transform: none !important; /* Prevent any stuck :active transform/effects */
+    transform: none !important;
+    background: #0d0d0d !important; /* Reset to default background */
+    box-shadow: none !important; /* Clear any shadow */
+    color: #00e5ff !important; /* Reset to default color */
   }
 }
-
 /* timer styling */
 #timer {
   font-size: 2rem;

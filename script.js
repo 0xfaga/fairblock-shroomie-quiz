@@ -76,22 +76,26 @@ function showQuestion() {
 }
 
 function resetState() {
-    answerButtons.innerHTML = '';
+    // Hide container briefly to force full repaint
+    answerButtons.style.display = 'none'; // Hide to reset rendering
+    answerButtons.innerHTML = ''; // Clear DOM
+    answerButtons.style.display = 'block'; // Restore immediately
+
     timeLeft = 30;
     timerEl.textContent = timeLeft;
     timerEl.style.width = '80px';
     clearInterval(timer);
-    document.activeElement?.blur(); // Clear focus for mobile
-    document.body.setAttribute('ontouchstart', ''); // Enable fast clicks on iOS
-    
-    // Force full repaint to clear sticky states on mobile (e.g., Safari :active persistence)
-    answerButtons.offsetHeight; // Trigger reflow
-    
-    // Safety cleanup (redundant but ensures no classes linger)
+    document.activeElement?.blur(); // Clear focus
+    document.body.setAttribute('ontouchstart', ''); // iOS fast-click
+
+    // Extra safety: clear any button states
     document.querySelectorAll('#answer-buttons button').forEach(btn => {
         btn.classList.remove('selected', 'active', 'correct', 'wrong');
         btn.disabled = false;
     });
+
+    // Debug log to confirm clear
+    console.log('resetState: Buttons after clear:', document.querySelectorAll('#answer-buttons button').length);
 }
 
 function startTimer() {
@@ -113,7 +117,7 @@ function startTimer() {
 function selectAnswer(answer, button) {
     clearInterval(timer);
 
-    // Clear all classes immediately to prevent lingering states
+    // Clear all classes immediately
     const allButtons = document.querySelectorAll('#answer-buttons button');
     allButtons.forEach(btn => {
         btn.classList.remove('correct', 'wrong', 'selected', 'active');
@@ -131,15 +135,20 @@ function selectAnswer(answer, button) {
 
     allButtons.forEach(btn => btn.disabled = true);
 
-    // Increase delay for mobile rendering
+    // Debug log before delay
+    console.log('selectAnswer: Selected buttons before delay:', document.querySelectorAll('.selected').length);
+
+    // Increase delay for iOS Chrome
     setTimeout(() => {
         allButtons.forEach(btn => {
             btn.classList.remove('correct', 'wrong', 'selected', 'active');
             btn.disabled = false;
         });
-        document.activeElement?.blur(); // Extra focus clear for mobile
+        document.activeElement?.blur();
+        // Debug log after clear
+        console.log('selectAnswer: Selected buttons after clear:', document.querySelectorAll('.selected').length);
         nextQuestion();
-    }, 1200); // Increased to 1000ms for slower devices
+    }, 1500); // Increased to 1500ms for WebKit
 }
 
 function nextQuestion() {
