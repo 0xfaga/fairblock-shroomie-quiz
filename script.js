@@ -83,7 +83,11 @@ function resetState() {
     clearInterval(timer);
     document.activeElement?.blur(); // Clear focus for mobile
     document.body.setAttribute('ontouchstart', ''); // Enable fast clicks on iOS
-    // Ensure no lingering button states
+    
+    // Force full repaint to clear sticky states on mobile (e.g., Safari :active persistence)
+    answerButtons.offsetHeight; // Trigger reflow
+    
+    // Safety cleanup (redundant but ensures no classes linger)
     document.querySelectorAll('#answer-buttons button').forEach(btn => {
         btn.classList.remove('selected', 'active', 'correct', 'wrong');
         btn.disabled = false;
@@ -135,7 +139,7 @@ function selectAnswer(answer, button) {
         });
         document.activeElement?.blur(); // Extra focus clear for mobile
         nextQuestion();
-    }, 1000); // Increased to 1000ms for slower devices
+    }, 1200); // Increased to 1000ms for slower devices
 }
 
 function nextQuestion() {

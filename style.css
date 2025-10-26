@@ -139,10 +139,12 @@ input::placeholder {
   box-shadow: 0 0 10px #ff0055;
 }
 
-/* Disable transitions on mobile to prevent visual lag */
 @media (hover: none) {
   #answer-buttons button {
     transition: none; /* Remove transitions for instant updates */
+  }
+  #answer-buttons button:active {
+    transform: none !important; /* Prevent any stuck :active transform/effects */
   }
 }
 
