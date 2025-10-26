@@ -54,18 +54,21 @@ function showQuestion() {
         const btn = document.createElement('button');
         btn.textContent = `${optionLetters[index]}) ${answer.text}`;
         btn.classList.add('answer-btn');
-        // Add click and touchend listeners
+        // Add both click and touchend for mobile reliability
         btn.addEventListener('click', () => selectAnswer(answer, btn));
         btn.addEventListener('touchend', (e) => {
-            e.preventDefault(); // Prevent click event from firing too
+            e.preventDefault(); // Prevent double-firing with click
             selectAnswer(answer, btn);
         });
         answerButtons.appendChild(btn);
     });
 
-    // Remove any lingering states (redundant but safe)
+    // Clear any residual states
     const allButtons = document.querySelectorAll('#answer-buttons button');
-    allButtons.forEach(btn => btn.classList.remove('selected', 'active', 'correct', 'wrong'));
+    allButtons.forEach(btn => {
+        btn.classList.remove('selected', 'active', 'correct', 'wrong');
+        btn.disabled = false;
+    });
 
     if (progressBar) {
         progressBar.style.width = `${(currentQuestion / questions.length) * 100}%`;
@@ -78,14 +81,13 @@ function resetState() {
     timerEl.textContent = timeLeft;
     timerEl.style.width = '80px';
     clearInterval(timer);
-    // Enhanced mobile cleanup
-    document.activeElement?.blur(); // Remove focus
+    document.activeElement?.blur(); // Clear focus for mobile
+    document.body.setAttribute('ontouchstart', ''); // Enable fast clicks on iOS
+    // Ensure no lingering button states
     document.querySelectorAll('#answer-buttons button').forEach(btn => {
         btn.classList.remove('selected', 'active', 'correct', 'wrong');
         btn.disabled = false;
     });
-    // Add touchstart to body to enable fast clicks on iOS
-    document.body.setAttribute('ontouchstart', '');
 }
 
 function startTimer() {
@@ -111,10 +113,10 @@ function selectAnswer(answer, button) {
     const allButtons = document.querySelectorAll('#answer-buttons button');
     allButtons.forEach(btn => {
         btn.classList.remove('correct', 'wrong', 'selected', 'active');
-        btn.disabled = false; // Ensure buttons are re-enabled
+        btn.disabled = false;
     });
 
-    // Add new classes
+    // Apply new classes
     if (answer.correct) {
         button.classList.add('correct');
         score++;
@@ -125,14 +127,15 @@ function selectAnswer(answer, button) {
 
     allButtons.forEach(btn => btn.disabled = true);
 
-    // Keep feedback delay, but increase slightly for mobile
+    // Increase delay for mobile rendering
     setTimeout(() => {
         allButtons.forEach(btn => {
             btn.classList.remove('correct', 'wrong', 'selected', 'active');
-            btn.disabled = false; // Ensure clean state
+            btn.disabled = false;
         });
+        document.activeElement?.blur(); // Extra focus clear for mobile
         nextQuestion();
-    }, 1000); // Increased to 1000ms for slower mobile devices
+    }, 1000); // Increased to 1000ms for slower devices
 }
 
 function nextQuestion() {
