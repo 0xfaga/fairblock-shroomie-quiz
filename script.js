@@ -46,34 +46,46 @@ function startQuiz() {
 }
 
 function showQuestion() {
-  resetState();
-  const q = questions[currentQuestion];
-  questionText.textContent = q.question;
+    resetState();
+    const q = questions[currentQuestion];
+    questionText.textContent = q.question;
 
-  q.answers.forEach((answer, index) => {
-    const btn = document.createElement('button');
-    btn.textContent = `${optionLetters[index]}) ${answer.text}`;
-    btn.classList.add('answer-btn');
-    btn.addEventListener('click', () => selectAnswer(answer, btn));
-    answerButtons.appendChild(btn);
-  });
+    q.answers.forEach((answer, index) => {
+        const btn = document.createElement('button');
+        btn.textContent = `${optionLetters[index]}) ${answer.text}`;
+        btn.classList.add('answer-btn');
+        // Add click and touchend listeners
+        btn.addEventListener('click', () => selectAnswer(answer, btn));
+        btn.addEventListener('touchend', (e) => {
+            e.preventDefault(); // Prevent click event from firing too
+            selectAnswer(answer, btn);
+        });
+        answerButtons.appendChild(btn);
+    });
 
-  // ✅ clear all lingering active/selected states before showing new question
-  const allButtons = document.querySelectorAll('#answer-buttons button');
-  allButtons.forEach(btn => btn.classList.remove('selected', 'active', 'correct', 'wrong'));
+    // Remove any lingering states (redundant but safe)
+    const allButtons = document.querySelectorAll('#answer-buttons button');
+    allButtons.forEach(btn => btn.classList.remove('selected', 'active', 'correct', 'wrong'));
 
-  if (progressBar) {
-    progressBar.style.width = `${(currentQuestion / questions.length) * 100}%`;
-  }
+    if (progressBar) {
+        progressBar.style.width = `${(currentQuestion / questions.length) * 100}%`;
+    }
 }
 
 function resetState() {
-  answerButtons.innerHTML = '';
-  timeLeft = 30;
-  timerEl.textContent = timeLeft;
-  timerEl.style.width = '80px';
-  clearInterval(timer);
-  document.activeElement?.blur();
+    answerButtons.innerHTML = '';
+    timeLeft = 30;
+    timerEl.textContent = timeLeft;
+    timerEl.style.width = '80px';
+    clearInterval(timer);
+    // Enhanced mobile cleanup
+    document.activeElement?.blur(); // Remove focus
+    document.querySelectorAll('#answer-buttons button').forEach(btn => {
+        btn.classList.remove('selected', 'active', 'correct', 'wrong');
+        btn.disabled = false;
+    });
+    // Add touchstart to body to enable fast clicks on iOS
+    document.body.setAttribute('ontouchstart', '');
 }
 
 function startTimer() {
@@ -93,28 +105,34 @@ function startTimer() {
 }
 
 function selectAnswer(answer, button) {
-  clearInterval(timer);
+    clearInterval(timer);
 
-  // ✅ clear any previously active states before marking new one
-  const allButtons = document.querySelectorAll('#answer-buttons button');
-  allButtons.forEach(btn => btn.classList.remove('correct', 'wrong', 'selected'));
+    // Clear all classes immediately to prevent lingering states
+    const allButtons = document.querySelectorAll('#answer-buttons button');
+    allButtons.forEach(btn => {
+        btn.classList.remove('correct', 'wrong', 'selected', 'active');
+        btn.disabled = false; // Ensure buttons are re-enabled
+    });
 
-  if (answer.correct) {
-    button.classList.add('correct');
-    score++;
-  } else {
-    button.classList.add('wrong');
-  }
+    // Add new classes
+    if (answer.correct) {
+        button.classList.add('correct');
+        score++;
+    } else {
+        button.classList.add('wrong');
+    }
+    button.classList.add('selected');
 
-  button.classList.add('selected');
+    allButtons.forEach(btn => btn.disabled = true);
 
-  allButtons.forEach(btn => btn.disabled = true);
-
-  // ✅ brief feedback before next question
-  setTimeout(() => {
-    allButtons.forEach(btn => btn.classList.remove('correct', 'wrong', 'selected'));
-    nextQuestion();
-  }, 700);
+    // Keep feedback delay, but increase slightly for mobile
+    setTimeout(() => {
+        allButtons.forEach(btn => {
+            btn.classList.remove('correct', 'wrong', 'selected', 'active');
+            btn.disabled = false; // Ensure clean state
+        });
+        nextQuestion();
+    }, 1000); // Increased to 1000ms for slower mobile devices
 }
 
 function nextQuestion() {

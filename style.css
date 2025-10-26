@@ -103,17 +103,24 @@ input::placeholder {
   cursor: pointer;
   transition: all 0.2s ease;
   letter-spacing: 0.5px;
+  -webkit-tap-highlight-color: transparent; /* Prevent blue highlight on mobile */
+  touch-action: manipulation; /* Improve touch responsiveness */
 }
 
-/* ✅ fix for mobile tap highlight issue */
-button:focus,
-button:active {
+/* Fix for mobile tap highlight and sticky states */
+#answer-buttons button:focus,
+#answer-buttons button:active {
   outline: none;
-  background: none;
   box-shadow: none;
 }
 
-/* button states */
+/* Ensure explicit control of states */
+#answer-buttons button.selected {
+  background: #007bff;
+  color: white;
+  box-shadow: 0 0 10px #007bff;
+}
+
 #answer-buttons button:hover {
   background: #00e5ff;
   color: #000;
@@ -130,6 +137,13 @@ button:active {
   background-color: #ff0055;
   color: #000;
   box-shadow: 0 0 10px #ff0055;
+}
+
+/* Disable transitions on mobile to prevent visual lag */
+@media (hover: none) {
+  #answer-buttons button {
+    transition: none; /* Remove transitions for instant updates */
+  }
 }
 
 /* timer styling */
