@@ -90,6 +90,12 @@ input::placeholder {
 }
 
 /* answer buttons */
+#answer-buttons {
+  -webkit-user-select: none; /* Prevent selection */
+  -moz-user-select: none;
+  user-select: none;
+}
+
 #answer-buttons button {
   display: block;
   background-color: #0d0d0d;
@@ -105,6 +111,7 @@ input::placeholder {
   letter-spacing: 0.5px;
   -webkit-tap-highlight-color: transparent; /* Prevent blue highlight on mobile */
   touch-action: manipulation; /* Improve touch responsiveness */
+  user-select: none; /* Prevent text selection on touch */
 }
 
 /* Fix for mobile tap highlight and sticky states */
@@ -112,6 +119,8 @@ input::placeholder {
 #answer-buttons button:active {
   outline: none;
   box-shadow: none;
+  background: #0d0d0d; /* Explicitly reset background */
+  color: #00e5ff; /* Explicitly reset color */
 }
 
 /* Ensure explicit control of states */
@@ -139,9 +148,16 @@ input::placeholder {
   box-shadow: 0 0 10px #ff0055;
 }
 
+/* Fallback to enforce default state */
+#answer-buttons button:not(.selected):not(.correct):not(.wrong) {
+  background: #0d0d0d !important; /* Force default background */
+  color: #00e5ff !important; /* Force default color */
+  box-shadow: none !important; /* Clear any shadow */
+}
+
 @media (hover: none) {
   #answer-buttons button {
-    transition: none; /* Already present */
+    transition: none;
   }
   #answer-buttons button:active {
     transform: none !important;

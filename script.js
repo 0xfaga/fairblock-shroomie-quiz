@@ -50,6 +50,12 @@ function resetState() {
     questionText.textContent = '';
     answerButtons.innerHTML = '';
     
+    // Explicitly remove classes from any remaining buttons (just in case)
+    document.querySelectorAll('#answer-buttons button').forEach(btn => {
+        btn.classList.remove('selected', 'active', 'correct', 'wrong');
+        btn.disabled = false;
+    });
+    
     // Hide container to force repaint
     const questionContainer = document.getElementById('question-container');
     questionContainer.style.display = 'none';
@@ -61,11 +67,18 @@ function resetState() {
     timerEl.textContent = timeLeft;
     timerEl.style.width = '80px';
     clearInterval(timer);
-    document.activeElement?.blur();
-    document.body.setAttribute('ontouchstart', '');
+    
+    // Force blur and remove focus from all elements
+    if (document.activeElement) {
+        document.activeElement.blur();
+    }
+    document.querySelectorAll(':focus').forEach(el => el.blur());
+    
+    // Clear touch-related attributes
+    document.body.removeAttribute('ontouchstart');
     
     // Debug log
-    console.log('resetState: Text and buttons cleared, container reset');
+    console.log('resetState: Text and buttons cleared, container reset, focus cleared');
 }
 
 function showQuestion() {
@@ -77,10 +90,14 @@ function showQuestion() {
         const btn = document.createElement('button');
         btn.textContent = `${optionLetters[index]}) ${answer.text}`;
         btn.classList.add('answer-btn');
-        btn.addEventListener('click', () => selectAnswer(answer, btn));
-        btn.addEventListener('touchend', (e) => {
-            e.preventDefault();
+        btn.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent any default behavior
             selectAnswer(answer, btn);
+        });
+        btn.addEventListener('touchend', (e) => {
+            e.preventDefault(); // Prevent default touch behavior
+            selectAnswer(answer, btn);
+            btn.blur(); // Immediately remove focus after touch
         });
         answerButtons.appendChild(btn);
     });
@@ -89,13 +106,13 @@ function showQuestion() {
     allButtons.forEach(btn => {
         btn.classList.remove('selected', 'active', 'correct', 'wrong');
         btn.disabled = false;
+        btn.blur(); // Ensure no button starts focused
     });
 
     if (progressBar) {
         progressBar.style.width = `${(currentQuestion / questions.length) * 100}%`;
     }
 
-    // Debug: Confirm question loaded
     console.log('showQuestion: Question text set to:', questionText.textContent);
     console.log('showQuestion: Buttons added:', allButtons.length);
 }
@@ -125,8 +142,15 @@ function selectAnswer(answer, button) {
         allButtons.forEach(btn => {
             btn.classList.remove('correct', 'wrong', 'selected', 'active');
             btn.disabled = false;
+            btn.blur(); // Explicitly remove focus from each button
         });
-        document.activeElement?.blur();
+        
+        // Force global focus reset
+        if (document.activeElement) {
+            document.activeElement.blur();
+        }
+        document.querySelectorAll(':focus').forEach(el => el.blur());
+        
         console.log('selectAnswer: Selected buttons after clear:', document.querySelectorAll('.selected').length);
         nextQuestion();
     }, 300);
