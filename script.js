@@ -71,13 +71,6 @@ function resetState() {
 function showQuestion() {
     resetState();
     const q = questions[currentQuestion];
-    
-    // Verify question data
-    if (!q || !q.question || !q.answers) {
-        console.error('showQuestion: Invalid question data at index', currentQuestion, q);
-        return;
-    }
-    
     questionText.textContent = q.question;
 
     q.answers.forEach((answer, index) => {
@@ -92,10 +85,9 @@ function showQuestion() {
         answerButtons.appendChild(btn);
     });
 
-    // Clear any residual states
     const allButtons = document.querySelectorAll('#answer-buttons button');
     allButtons.forEach(btn => {
-        btn.classList.remove('selected', '_helper: none;
+        btn.classList.remove('selected', 'active', 'correct', 'wrong');
         btn.disabled = false;
     });
 
@@ -103,20 +95,20 @@ function showQuestion() {
         progressBar.style.width = `${(currentQuestion / questions.length) * 100}%`;
     }
 
-    console.log('showQuestion: Question set:', q.question, 'Buttons added:', allButtons.length);
+    // Debug: Confirm question loaded
+    console.log('showQuestion: Question text set to:', questionText.textContent);
+    console.log('showQuestion: Buttons added:', allButtons.length);
 }
 
 function selectAnswer(answer, button) {
     clearInterval(timer);
 
-    // Double-clear classes to ensure no lingering states
     const allButtons = document.querySelectorAll('#answer-buttons button');
     allButtons.forEach(btn => {
         btn.classList.remove('correct', 'wrong', 'selected', 'active');
         btn.disabled = false;
     });
 
-    // Apply new classes
     if (answer.correct) {
         button.classList.add('correct');
         score++;
@@ -129,21 +121,15 @@ function selectAnswer(answer, button) {
 
     console.log('selectAnswer: Selected buttons before delay:', document.querySelectorAll('.selected').length);
 
-    // Hide container immediately to clear rendering
-    const questionContainer = document.getElementById('question-container');
-    questionContainer.style.display = 'none';
-
     setTimeout(() => {
-        // Clear again and show container
         allButtons.forEach(btn => {
             btn.classList.remove('correct', 'wrong', 'selected', 'active');
             btn.disabled = false;
         });
-        questionContainer.style.display = 'block';
         document.activeElement?.blur();
         console.log('selectAnswer: Selected buttons after clear:', document.querySelectorAll('.selected').length);
         nextQuestion();
-    }, 200); // Short delay for immediate hide
+    }, 300);
 }
 
 function startTimer() {
