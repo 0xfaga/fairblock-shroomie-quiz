@@ -76,26 +76,33 @@ function showQuestion() {
 }
 
 function resetState() {
-    // Hide container briefly to force full repaint
-    answerButtons.style.display = 'none'; // Hide to reset rendering
-    answerButtons.innerHTML = ''; // Clear DOM
-    answerButtons.style.display = 'block'; // Restore immediately
+    // Nuclear option: Completely rebuild the question container
+    const questionContainer = document.getElementById('question-container');
+    const oldContainer = questionContainer.cloneNode(false); // Clone without children
+    questionContainer.parentNode.replaceChild(oldContainer, questionContainer);
+    
+    // Reattach IDs for our elements
+    oldContainer.id = 'question-container';
+    const newQuestionText = document.createElement('div');
+    newQuestionText.id = 'question-text';
+    oldContainer.appendChild(newQuestionText);
+    
+    const newAnswerButtons = document.createElement('div');
+    newAnswerButtons.id = 'answer-buttons';
+    oldContainer.appendChild(newAnswerButtons);
+    
+    // Update global references
+    questionText = document.getElementById('question-text');
+    answerButtons = document.getElementById('answer-buttons');
 
     timeLeft = 30;
     timerEl.textContent = timeLeft;
     timerEl.style.width = '80px';
     clearInterval(timer);
-    document.activeElement?.blur(); // Clear focus
-    document.body.setAttribute('ontouchstart', ''); // iOS fast-click
-
-    // Extra safety: clear any button states
-    document.querySelectorAll('#answer-buttons button').forEach(btn => {
-        btn.classList.remove('selected', 'active', 'correct', 'wrong');
-        btn.disabled = false;
-    });
-
-    // Debug log to confirm clear
-    console.log('resetState: Buttons after clear:', document.querySelectorAll('#answer-buttons button').length);
+    document.activeElement?.blur();
+    document.body.setAttribute('ontouchstart', '');
+    
+    console.log('resetState: Container recreated, buttons cleared');
 }
 
 function startTimer() {
